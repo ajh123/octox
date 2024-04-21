@@ -11,7 +11,7 @@ use ulib::{
 
 fn main() {
     // Ensure that three file descriptors are open
-    while let Ok(fd) = OpenOptions::new().read(true).write(true).open("console") {
+    while let Ok(fd) = OpenOptions::new().read(true).write(true).open("/dev/tty0") {
         if fd.get_fd() > 2 {
             drop(fd);
             break;

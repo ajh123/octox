@@ -1,7 +1,7 @@
 #![no_std]
 extern crate alloc;
 use ulib::{
-    fs::{File, OpenOptions},
+    fs::{self, File, OpenOptions},
     print, println,
     process::Command,
     stdio,
@@ -9,9 +9,10 @@ use ulib::{
 };
 
 fn main() -> sys::Result<()> {
+    fs::create_dir("/dev").unwrap();
     loop {
-        match OpenOptions::new().read(true).write(true).open("console") {
-            Err(_) => sys::mknod("console", Major::Console as usize, 0)?, // Major をそのまま指定できるように自動生成のところの定義を変更すべき
+        match OpenOptions::new().read(true).write(true).open("/dev/tty0") {
+            Err(_) => sys::mknod("/dev/tty0", Major::Console as usize, 0)?, // Major をそのまま指定できるように自動生成のところの定義を変更すべき
             Ok(stdin) => {
                 stdio::stdout().set(stdin.try_clone()?)?;
                 stdio::stderr().set(stdin.try_clone()?)?;
@@ -20,8 +21,8 @@ fn main() -> sys::Result<()> {
             }
         }
     }
-    if File::open("null").is_err() {
-        sys::mknod("null", Major::Null as usize, 0).unwrap();
+    if File::open("/dev/null").is_err() {
+        sys::mknod("/dev/null", Major::Null as usize, 0).unwrap();
     }
 
     loop {

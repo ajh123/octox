@@ -53,7 +53,7 @@ impl Stdio {
                 let file = OpenOptions::new()
                     .read(readable)
                     .write(!readable)
-                    .open("null")?;
+                    .open("/dev/null")?;
                 Ok((ChildStdio::Fd(file), None))
             }
         }
